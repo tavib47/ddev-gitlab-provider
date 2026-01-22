@@ -5,7 +5,7 @@ A DDEV add-on that provides a pull provider for GitLab Package Registry. Pull da
 ## Installation
 
 ```bash
-ddev get github.com/tavib47/ddev-gitlab-provider
+ddev add-on get https://github.com/tavib47/ddev-gitlab-provider
 ```
 
 ## Configuration
@@ -79,5 +79,5 @@ After installation, you can customize the provider by editing `.ddev/providers/g
 ## Removal
 
 ```bash
-ddev get --remove ddev-gitlab-provider
+ddev add-on remove ddev-gitlab-provider
 ```
