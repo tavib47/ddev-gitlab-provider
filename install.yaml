@@ -29,25 +29,32 @@ post_install_actions:
     # GitLab Package Registry configuration for 'ddev pull gitlab'
     # Copy these to .ddev/.env and fill in your values
 
-    # Your GitLab project ID (required)
+    # Required
     GITLAB_PROJECT_ID=
-
-    # GitLab Personal Access Token with 'read_api' scope (required)
-    # Create at: https://gitlab.com/-/user_settings/personal_access_tokens
     GITLAB_TOKEN=
 
-    # GitLab API URL (optional, defaults to https://gitlab.com/api/v4)
+    # Optional - GitLab API URL (default: https://gitlab.com/api/v4)
     # GITLAB_API_URL=https://gitlab.com/api/v4
 
-    # Package configuration (optional)
+    # Database configuration
     # DB_DUMP_PACKAGE_NAME=database
     # DB_DUMP_VERSION=test
-    # FILES_DUMP_PACKAGE_NAME=drupal-files
-    # FILES_DUMP_VERSION=test
+    # DB_DUMP_FILENAME=dump.sql.gz
+
+    # Public files configuration
+    # PUBLIC_FILES_PACKAGE_NAME=drupal-files
+    # PUBLIC_FILES_VERSION=test
+    # PUBLIC_FILES_FILENAME=public-files.tar.gz
+
+    # Private files configuration
+    # PULL_PRIVATE_FILES=false
+    # PRIVATE_FILES_PACKAGE_NAME=drupal-files
+    # PRIVATE_FILES_VERSION=test
+    # PRIVATE_FILES_FILENAME=private-files.tar.gz
+    # PRIVATE_FILES_PATH=private
     EOF
       echo "Added GitLab configuration to .ddev/.env.example"
     fi
 
 yaml_read_files:
   - .ddev/.env
-

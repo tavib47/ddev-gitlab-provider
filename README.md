@@ -17,12 +17,25 @@ After installation, create `.ddev/.env` with your GitLab credentials:
 GITLAB_PROJECT_ID=12345678
 GITLAB_TOKEN=glpat-xxxxxxxxxxxx
 
-# Optional (defaults shown)
+# Optional - GitLab API URL (default: https://gitlab.com/api/v4)
 # GITLAB_API_URL=https://gitlab.com/api/v4
+
+# Database configuration (optional, defaults shown)
 # DB_DUMP_PACKAGE_NAME=database
 # DB_DUMP_VERSION=test
-# FILES_DUMP_PACKAGE_NAME=drupal-files
-# FILES_DUMP_VERSION=test
+# DB_DUMP_FILENAME=dump.sql.gz
+
+# Public files configuration (optional, defaults shown)
+# PUBLIC_FILES_PACKAGE_NAME=drupal-files
+# PUBLIC_FILES_VERSION=test
+# PUBLIC_FILES_FILENAME=public-files.tar.gz
+
+# Private files configuration (optional, defaults shown)
+# PULL_PRIVATE_FILES=false          # Set to "true" to enable
+# PRIVATE_FILES_PACKAGE_NAME=drupal-files
+# PRIVATE_FILES_VERSION=test
+# PRIVATE_FILES_FILENAME=private-files.tar.gz
+# PRIVATE_FILES_PATH=private        # Destination path
 ```
 
 ### Getting your GitLab Project ID
@@ -55,6 +68,7 @@ This provider is designed to work with database and file dumps uploaded to GitLa
 Expected package structure:
 - `database/{version}/dump.sql.gz` - Database dump
 - `drupal-files/{version}/public-files.tar.gz` - Public files archive
+- `drupal-files/{version}/private-files.tar.gz` - Private files archive (optional)
 
 See [gitlab-ci templates](https://gitlab.com/tavib47/gitlab-ci) for CI/CD templates that upload to the Package Registry.
 
