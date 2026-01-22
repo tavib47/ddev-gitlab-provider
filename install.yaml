@@ -56,5 +56,3 @@ post_install_actions:
       echo "Added GitLab configuration to .ddev/.env.example"
     fi
 
-yaml_read_files:
-  - .ddev/.env
