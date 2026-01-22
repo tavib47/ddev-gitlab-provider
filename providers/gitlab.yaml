@@ -29,31 +29,17 @@
 # Usage:
 #   ddev pull gitlab
 
-environment_variables:
-  gitlab_api_url: ${GITLAB_API_URL:-https://gitlab.com/api/v4}
-  gitlab_project_id: ${GITLAB_PROJECT_ID:-}
-  gitlab_token: ${GITLAB_TOKEN:-}
-  db_package_name: ${DB_DUMP_PACKAGE_NAME:-database}
-  db_version: ${DB_DUMP_VERSION:-test}
-  db_filename: ${DB_DUMP_FILENAME:-dump.sql.gz}
-  public_files_package_name: ${PUBLIC_FILES_PACKAGE_NAME:-drupal-files}
-  public_files_version: ${PUBLIC_FILES_VERSION:-test}
-  public_files_filename: ${PUBLIC_FILES_FILENAME:-public-files.tar.gz}
-  private_files_package_name: ${PRIVATE_FILES_PACKAGE_NAME:-drupal-files}
-  private_files_version: ${PRIVATE_FILES_VERSION:-test}
-  private_files_filename: ${PRIVATE_FILES_FILENAME:-private-files.tar.gz}
-  private_files_path: ${PRIVATE_FILES_PATH:-private}
-  pull_private_files: ${PULL_PRIVATE_FILES:-false}
-
 auth_command:
   command: |
     set -eu -o pipefail
-    if [ -z "${gitlab_project_id:-}" ]; then
+    [ -f .env ] && source .env
+    [ -f .ddev/.env ] && source .ddev/.env
+    if [ -z "${GITLAB_PROJECT_ID:-}" ]; then
       echo "Error: GITLAB_PROJECT_ID is not set"
       echo "Set it in .ddev/.env or export it in your shell"
       exit 1
     fi
-    if [ -z "${gitlab_token:-}" ]; then
+    if [ -z "${GITLAB_TOKEN:-}" ]; then
       echo "Error: GITLAB_TOKEN is not set"
       echo "Create a token with 'read_api' scope at https://gitlab.com/-/user_settings/personal_access_tokens"
       echo "Then set it in .ddev/.env or export it in your shell"
@@ -64,12 +50,19 @@ auth_command:
 db_pull_command:
   command: |
     set -eu -o pipefail
+    [ -f .env ] && source .env
+    [ -f .ddev/.env ] && source .ddev/.env
+    GITLAB_API_URL="${GITLAB_API_URL:-https://gitlab.com/api/v4}"
+    DB_DUMP_PACKAGE_NAME="${DB_DUMP_PACKAGE_NAME:-database}"
+    DB_DUMP_VERSION="${DB_DUMP_VERSION:-test}"
+    DB_DUMP_FILENAME="${DB_DUMP_FILENAME:-dump.sql.gz}"
+
     mkdir -p .ddev/.downloads
-    DOWNLOAD_URL="${gitlab_api_url}/projects/${gitlab_project_id}/packages/generic/${db_package_name}/${db_version}/${db_filename}"
+    DOWNLOAD_URL="${GITLAB_API_URL}/projects/${GITLAB_PROJECT_ID}/packages/generic/${DB_DUMP_PACKAGE_NAME}/${DB_DUMP_VERSION}/${DB_DUMP_FILENAME}"
     echo "Downloading database from GitLab Package Registry..."
     echo "URL: ${DOWNLOAD_URL}"
     curl --fail --silent --show-error \
-      --header "PRIVATE-TOKEN: ${gitlab_token}" \
+      --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
       --output .ddev/.downloads/db.sql.gz \
       "${DOWNLOAD_URL}"
     echo "Database download complete."
@@ -78,14 +71,26 @@ db_pull_command:
 files_pull_command:
   command: |
     set -eu -o pipefail
+    [ -f .env ] && source .env
+    [ -f .ddev/.env ] && source .ddev/.env
+    GITLAB_API_URL="${GITLAB_API_URL:-https://gitlab.com/api/v4}"
+    PUBLIC_FILES_PACKAGE_NAME="${PUBLIC_FILES_PACKAGE_NAME:-drupal-files}"
+    PUBLIC_FILES_VERSION="${PUBLIC_FILES_VERSION:-test}"
+    PUBLIC_FILES_FILENAME="${PUBLIC_FILES_FILENAME:-public-files.tar.gz}"
+    PRIVATE_FILES_PACKAGE_NAME="${PRIVATE_FILES_PACKAGE_NAME:-drupal-files}"
+    PRIVATE_FILES_VERSION="${PRIVATE_FILES_VERSION:-test}"
+    PRIVATE_FILES_FILENAME="${PRIVATE_FILES_FILENAME:-private-files.tar.gz}"
+    PRIVATE_FILES_PATH="${PRIVATE_FILES_PATH:-private}"
+    PULL_PRIVATE_FILES="${PULL_PRIVATE_FILES:-false}"
+
     mkdir -p .ddev/.downloads/files
 
     # Download public files
-    PUBLIC_URL="${gitlab_api_url}/projects/${gitlab_project_id}/packages/generic/${public_files_package_name}/${public_files_version}/${public_files_filename}"
+    PUBLIC_URL="${GITLAB_API_URL}/projects/${GITLAB_PROJECT_ID}/packages/generic/${PUBLIC_FILES_PACKAGE_NAME}/${PUBLIC_FILES_VERSION}/${PUBLIC_FILES_FILENAME}"
     echo "Downloading public files from GitLab Package Registry..."
     echo "URL: ${PUBLIC_URL}"
     curl --fail --silent --show-error \
-      --header "PRIVATE-TOKEN: ${gitlab_token}" \
+      --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
       --output .ddev/.downloads/public-files.tar.gz \
       "${PUBLIC_URL}"
 
@@ -94,19 +99,19 @@ files_pull_command:
     tar -xzf .ddev/.downloads/public-files.tar.gz -C .ddev/.downloads/files/
 
     # Download private files if enabled
-    if [ "${pull_private_files}" = "true" ]; then
-      PRIVATE_URL="${gitlab_api_url}/projects/${gitlab_project_id}/packages/generic/${private_files_package_name}/${private_files_version}/${private_files_filename}"
+    if [ "${PULL_PRIVATE_FILES}" = "true" ]; then
+      PRIVATE_URL="${GITLAB_API_URL}/projects/${GITLAB_PROJECT_ID}/packages/generic/${PRIVATE_FILES_PACKAGE_NAME}/${PRIVATE_FILES_VERSION}/${PRIVATE_FILES_FILENAME}"
       echo "Downloading private files from GitLab Package Registry..."
       echo "URL: ${PRIVATE_URL}"
       curl --fail --silent --show-error \
-        --header "PRIVATE-TOKEN: ${gitlab_token}" \
+        --header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
         --output .ddev/.downloads/private-files.tar.gz \
         "${PRIVATE_URL}"
 
-      echo "Extracting private files to ${private_files_path}..."
-      mkdir -p "${private_files_path}"
-      tar -xzf .ddev/.downloads/private-files.tar.gz -C "${private_files_path}" --strip-components=4 2>/dev/null || \
-      tar -xzf .ddev/.downloads/private-files.tar.gz -C "${private_files_path}"
+      echo "Extracting private files to ${PRIVATE_FILES_PATH}..."
+      mkdir -p "${PRIVATE_FILES_PATH}"
+      tar -xzf .ddev/.downloads/private-files.tar.gz -C "${PRIVATE_FILES_PATH}" --strip-components=4 2>/dev/null || \
+      tar -xzf .ddev/.downloads/private-files.tar.gz -C "${PRIVATE_FILES_PATH}"
     fi
 
     echo "Files download complete."
