@@ -8,8 +8,14 @@ pre_install_actions:
   - |
     #ddev-description:Checking for required environment variables
     if [ -z "${GITLAB_PROJECT_ID:-}" ]; then
-      echo "Note: GITLAB_PROJECT_ID is not set. You'll need to set it before using 'ddev pull gitlab'"
-      echo "Set it in .ddev/.env or export it in your shell"
+      echo ""
+      echo "Note: GITLAB_PROJECT_ID is not set."
+      echo "Set it in .ddev/.env before using 'ddev pull gitlab'"
+      echo ""
+      echo "Example .ddev/.env:"
+      echo "  GITLAB_PROJECT_ID=12345678"
+      echo "  GITLAB_TOKEN=glpat-xxxxxxxxxxxx"
+      echo ""
     fi
 
 # Files to copy to .ddev/
@@ -18,41 +24,3 @@ project_files:
 
 # Global files (none needed)
 global_files: []
-
-# Post-install actions
-post_install_actions:
-  - |
-    #ddev-description:Creating .env.example if it doesn't exist
-    if [ ! -f .ddev/.env.example ] || ! grep -q "GITLAB_PROJECT_ID" .ddev/.env.example 2>/dev/null; then
-      cat >> .ddev/.env.example << 'EOF'
-
-    # GitLab Package Registry configuration for 'ddev pull gitlab'
-    # Copy these to .ddev/.env and fill in your values
-
-    # Required
-    GITLAB_PROJECT_ID=
-    GITLAB_TOKEN=
-
-    # Optional - GitLab API URL (default: https://gitlab.com/api/v4)
-    # GITLAB_API_URL=https://gitlab.com/api/v4
-
-    # Database configuration
-    # DB_DUMP_PACKAGE_NAME=database
-    # DB_DUMP_VERSION=test
-    # DB_DUMP_FILENAME=dump.sql.gz
-
-    # Public files configuration
-    # PUBLIC_FILES_PACKAGE_NAME=drupal-files
-    # PUBLIC_FILES_VERSION=test
-    # PUBLIC_FILES_FILENAME=public-files.tar.gz
-
-    # Private files configuration
-    # PULL_PRIVATE_FILES=false
-    # PRIVATE_FILES_PACKAGE_NAME=drupal-files
-    # PRIVATE_FILES_VERSION=test
-    # PRIVATE_FILES_FILENAME=private-files.tar.gz
-    # PRIVATE_FILES_PATH=private
-    EOF
-      echo "Added GitLab configuration to .ddev/.env.example"
-    fi
-
