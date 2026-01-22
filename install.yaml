@@ -1,0 +1,53 @@
+name: ddev-gitlab-provider
+
+# This add-on provides a DDEV provider for pulling databases and files
+# from GitLab Package Registry.
+
+# Pre-install actions
+pre_install_actions:
+  - |
+    #ddev-description:Checking for required environment variables
+    if [ -z "${GITLAB_PROJECT_ID:-}" ]; then
+      echo "Note: GITLAB_PROJECT_ID is not set. You'll need to set it before using 'ddev pull gitlab'"
+      echo "Set it in .ddev/.env or export it in your shell"
+    fi
+
+# Files to copy to .ddev/
+project_files:
+  - providers/gitlab.yaml
+
+# Global files (none needed)
+global_files: []
+
+# Post-install actions
+post_install_actions:
+  - |
+    #ddev-description:Creating .env.example if it doesn't exist
+    if [ ! -f .ddev/.env.example ] || ! grep -q "GITLAB_PROJECT_ID" .ddev/.env.example 2>/dev/null; then
+      cat >> .ddev/.env.example << 'EOF'
+
+    # GitLab Package Registry configuration for 'ddev pull gitlab'
+    # Copy these to .ddev/.env and fill in your values
+
+    # Your GitLab project ID (required)
+    GITLAB_PROJECT_ID=
+
+    # GitLab Personal Access Token with 'read_api' scope (required)
+    # Create at: https://gitlab.com/-/user_settings/personal_access_tokens
+    GITLAB_TOKEN=
+
+    # GitLab API URL (optional, defaults to https://gitlab.com/api/v4)
+    # GITLAB_API_URL=https://gitlab.com/api/v4
+
+    # Package configuration (optional)
+    # DB_DUMP_PACKAGE_NAME=database
+    # DB_DUMP_VERSION=test
+    # FILES_DUMP_PACKAGE_NAME=drupal-files
+    # FILES_DUMP_VERSION=test
+    EOF
+      echo "Added GitLab configuration to .ddev/.env.example"
+    fi
+
+yaml_read_files:
+  - .ddev/.env
+
