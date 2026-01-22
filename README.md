@@ -7,6 +7,10 @@ A DDEV add-on that provides a pull provider for GitLab Package Registry. Pull da
 ```bash
 ddev add-on get https://github.com/tavib47/ddev-gitlab-provider
 ```
+If you encounter "Unable to download" error use this command instead:
+```bash
+ddev add-on get https://github.com/tavib47/ddev-gitlab-provider/archive/refs/tags/v1.0.2.tar.gz
+```
 
 ## Configuration
 
