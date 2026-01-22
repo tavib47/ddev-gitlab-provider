@@ -95,7 +95,6 @@ files_pull_command:
       "${PUBLIC_URL}"
 
     echo "Extracting public files..."
-    tar -xzf .ddev/.downloads/public-files.tar.gz -C .ddev/.downloads/files/ --strip-components=5 2>/dev/null || \
     tar -xzf .ddev/.downloads/public-files.tar.gz -C .ddev/.downloads/files/
 
     # Download private files if enabled
@@ -110,7 +109,6 @@ files_pull_command:
 
       echo "Extracting private files to ${PRIVATE_FILES_PATH}..."
       mkdir -p "${PRIVATE_FILES_PATH}"
-      tar -xzf .ddev/.downloads/private-files.tar.gz -C "${PRIVATE_FILES_PATH}" --strip-components=4 2>/dev/null || \
       tar -xzf .ddev/.downloads/private-files.tar.gz -C "${PRIVATE_FILES_PATH}"
     fi
 
