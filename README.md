@@ -44,7 +44,18 @@ GITLAB_TOKEN=glpat-xxxxxxxxxxxx
 
 ### Getting your GitLab Project ID
 
-Find it on your project's main page, under the project name, or in **Settings > General**.
+The project ID is a **numeric** value (e.g., `12345678`), not the project path.
+
+You can find it:
+
+1. **On GitLab UI:** On your project's main page under the project name, or in **Settings > General**
+
+2. **Via API:**
+   ```bash
+   curl --header "PRIVATE-TOKEN: your_token" \
+     "https://gitlab.com/api/v4/projects/your-group%2Fyour-project" | jq .id
+   ```
+   Note: Use `%2F` instead of `/` in the project path.
 
 ### Creating a GitLab Token
 
